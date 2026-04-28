@@ -936,6 +936,178 @@ body.dragging #canvas-wrapper { cursor: grabbing; }
 .hidden {
   display: none !important;
 }
+
+/* ========================== */
+/*       RESPONSIVE           */
+/* ========================== */
+
+/* Tablet & smaller */
+@media (max-width: 900px) {
+  #grid-container { padding: 70px 20px 30px; }
+  .grid-item { width: 260px; height: 260px; }
+
+  .header-top-bar { padding: 14px 14px; }
+  .logo-text { display: none; }
+
+  .theme-switcher { padding: 3px 4px; gap: 2px; }
+  .theme-label { display: none; }
+  .theme-dot { width: 16px; height: 16px; }
+
+  .menu-toggle { padding: 7px 12px; font-size: 10px; gap: 6px; }
+
+  .menu-panel.open { max-height: 75vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 14px;
+    row-gap: 18px;
+    padding: 18px 16px 22px;
+  }
+  .nav-section,
+  .values-section,
+  .location-section,
+  .contact-section { grid-column: auto; }
+  .social-section { display: none; }
+  a, .event-link, .cousin-link, .media-link, .insta-link { font-size: 13px; }
+
+  /* Lightbox stacks */
+  .lb-content {
+    flex-direction: column;
+    gap: 18px;
+    max-width: 94vw;
+    max-height: 92vh;
+    width: 100%;
+    padding: 0 12px;
+  }
+  #lightbox-media {
+    max-width: 90vw;
+    max-height: 55vh;
+  }
+  #lightbox-media img,
+  #lightbox-media video {
+    max-width: 90vw;
+    max-height: 55vh;
+  }
+  .lb-info-panel {
+    width: 100%;
+    padding: 4px 4px 8px;
+    transform: translateY(20px) !important;
+  }
+  #lightbox.active .lb-info-panel { transform: translateY(0) !important; }
+  .lb-title { font-size: 36px; margin-bottom: 10px; }
+  .lb-description { font-size: 13px; margin-bottom: 18px; line-height: 1.55; }
+  .lb-meta { gap: 8px; }
+  .lb-divider { margin-bottom: 14px; }
+
+  /* Lightbox nav buttons: keep next/prev but smaller and lower */
+  .lb-nav { width: 40px; height: 40px; }
+  #lb-prev { left: 12px; }
+  #lb-next { right: 12px; }
+  #lb-close { top: 14px; right: 14px; width: 36px; height: 36px; }
+  .lb-download-btn { top: 8px; right: 8px; width: 36px; height: 36px; opacity: 1; }
+  .lb-download-btn svg { width: 16px; height: 16px; }
+
+  /* Footer compresses to a single readable row */
+  .footer {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .coordinates-section,
+  .info-section { grid-column: auto; text-align: center; }
+  .info-section { display: none; }
+  #active-filters { grid-column: auto; justify-content: center; }
+  .footer p { font-size: 9px; letter-spacing: 0.12em; }
+  .active-tag { font-size: 8px; padding: 4px 9px; }
+
+  /* Zoom controls hidden on touch — pinch zoom works */
+  .zoom-controls { display: none !important; }
+  #zoom-toast { bottom: 80px; right: 12px; }
+
+  /* Hide cursor dot on touch */
+  .cursor-dot { display: none !important; }
+
+  /* Preloader scales */
+  .pl-title { font-size: 56px; }
+
+  /* No results headline scales */
+  #no-results h2 { font-size: 44px; }
+
+  /* Slightly softer vignette on small screens */
+  .page-vignette-extreme { opacity: 0.4; }
+}
+
+/* Phones */
+@media (max-width: 560px) {
+  #grid-container { padding: 64px 14px 24px; }
+  .grid-item { width: 200px; height: 200px; border-radius: 5px; }
+  .media-badge,
+  .item-number-badge { font-size: 8px; padding: 2px 7px; }
+
+  .header-top-bar { padding: 12px 12px; }
+  .menu-toggle { padding: 6px 10px; }
+  .menu-toggle span:first-child { display: none; }
+  .menu-toggle-icon { font-size: 18px; }
+
+  .theme-dot { width: 14px; height: 14px; border-width: 2px; }
+  .theme-switcher { padding: 3px; gap: 2px; }
+
+  .menu-grid { grid-template-columns: 1fr 1fr; padding: 16px 14px 20px; row-gap: 14px; column-gap: 12px; }
+  h3 { font-size: 8px; margin-bottom: 10px; }
+
+  .lb-title { font-size: 30px; }
+  .lb-tag { font-size: 8px; margin-bottom: 8px; }
+  .lb-meta-item { font-size: 9px; }
+  .lb-meta-value { font-size: 10px; }
+
+  .lb-nav { width: 36px; height: 36px; }
+  #lb-prev { left: 8px; }
+  #lb-next { right: 8px; }
+  #lb-close { top: 10px; right: 10px; width: 32px; height: 32px; }
+
+  .pl-title { font-size: 44px; }
+  .pl-sub { font-size: 10px; }
+
+  #no-results h2 { font-size: 36px; }
+}
+
+/* Short / landscape phones */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+  .lb-content { flex-direction: row; gap: 16px; }
+  #lightbox-media,
+  #lightbox-media img,
+  #lightbox-media video { max-width: 55vw; max-height: 75vh; }
+  .lb-info-panel { width: 36vw; padding: 8px 0; }
+  .lb-title { font-size: 28px; }
+  .menu-panel.open { max-height: 70vh; }
+}
+
+/* Touch devices: improve tappability + suppress hover quirks */
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: default; }
+  body.dragging { cursor: default; }
+  .cursor-dot { display: none !important; }
+
+  /* Show download button by default on touch (no hover state) */
+  .lb-download-btn { opacity: 1; }
+
+  /* Disable hover-only scale animations that get sticky on touch */
+  .grid-item:hover {
+    transform: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    border-color: var(--color-border);
+  }
+  .grid-item:hover img,
+  .grid-item:hover video {
+    transform: none;
+    filter: saturate(0.9);
+  }
+  .grid-item:hover::after { opacity: 0; }
+  .grid-item:hover .play-overlay { opacity: 1; transform: translate(-50%, -50%); }
+
+  /* Prevent iOS tap highlight */
+  * { -webkit-tap-highlight-color: transparent; }
+}
 </style>
 </head>
 <body data-theme="void">
