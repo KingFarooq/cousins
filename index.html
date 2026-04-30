@@ -432,7 +432,7 @@ body::before {
   border-bottom: 1px solid var(--color-border);
   transition: background 0.6s, border-color 0.6s, max-height 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
 }
-.menu-panel.open { max-height: 500px; opacity: 1; pointer-events: auto; }
+.menu-panel.open { max-height: 720px; opacity: 1; pointer-events: auto; }
 
 .menu-grid {
   display: grid;
@@ -440,6 +440,82 @@ body::before {
   column-gap: 16px;
   padding: 20px 24px 24px;
   position: relative;
+}
+
+/* ========================== */
+/*     ADVANCED SEARCH        */
+/* ========================== */
+.advanced-search {
+  grid-column: 1 / -1;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 16px;
+  row-gap: 10px;
+  align-items: end;
+}
+.advanced-search h3 { grid-column: 1 / -1; margin-bottom: 0; }
+.as-field { display: flex; flex-direction: column; gap: 6px; }
+.as-field.title-f { grid-column: 1 / span 3; }
+.as-field.desc-f { grid-column: 4 / span 3; }
+.as-field.cousins-f { grid-column: 7 / span 4; }
+.as-actions { grid-column: 11 / span 2; display: flex; gap: 8px; justify-content: flex-end; }
+
+.as-label {
+  font-family: "TheGoodMonolith", monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.as-input {
+  background: var(--color-bg3);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: var(--color-text);
+  font-family: "PPNeueMontreal", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+  width: 100%;
+  user-select: text;
+}
+.as-input::placeholder { color: var(--color-text-muted); }
+.as-input:focus {
+  border-color: rgba(var(--color-accent-rgb), 0.55);
+  background: var(--color-card-hover);
+}
+.as-hint {
+  font-family: "TheGoodMonolith", monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+.as-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 9px 14px;
+  color: var(--color-text-dim);
+  font-family: "TheGoodMonolith", monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.as-btn:hover { color: var(--color-text); border-color: var(--color-border-hover); }
+.as-btn.primary {
+  border-color: rgba(var(--color-accent-rgb), 0.55);
+  color: var(--color-accent);
+}
+.as-btn.primary:hover {
+  background: rgba(var(--color-accent-rgb), 0.12);
+  border-color: var(--color-accent);
 }
 
 .menu-grid::before {
@@ -936,178 +1012,6 @@ body.dragging #canvas-wrapper { cursor: grabbing; }
 .hidden {
   display: none !important;
 }
-
-/* ========================== */
-/*       RESPONSIVE           */
-/* ========================== */
-
-/* Tablet & smaller */
-@media (max-width: 900px) {
-  #grid-container { padding: 70px 20px 30px; }
-  .grid-item { width: 260px; height: 260px; }
-
-  .header-top-bar { padding: 14px 14px; }
-  .logo-text { display: none; }
-
-  .theme-switcher { padding: 3px 4px; gap: 2px; }
-  .theme-label { display: none; }
-  .theme-dot { width: 16px; height: 16px; }
-
-  .menu-toggle { padding: 7px 12px; font-size: 10px; gap: 6px; }
-
-  .menu-panel.open { max-height: 75vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 14px;
-    row-gap: 18px;
-    padding: 18px 16px 22px;
-  }
-  .nav-section,
-  .values-section,
-  .location-section,
-  .contact-section { grid-column: auto; }
-  .social-section { display: none; }
-  a, .event-link, .cousin-link, .media-link, .insta-link { font-size: 13px; }
-
-  /* Lightbox stacks */
-  .lb-content {
-    flex-direction: column;
-    gap: 18px;
-    max-width: 94vw;
-    max-height: 92vh;
-    width: 100%;
-    padding: 0 12px;
-  }
-  #lightbox-media {
-    max-width: 90vw;
-    max-height: 55vh;
-  }
-  #lightbox-media img,
-  #lightbox-media video {
-    max-width: 90vw;
-    max-height: 55vh;
-  }
-  .lb-info-panel {
-    width: 100%;
-    padding: 4px 4px 8px;
-    transform: translateY(20px) !important;
-  }
-  #lightbox.active .lb-info-panel { transform: translateY(0) !important; }
-  .lb-title { font-size: 36px; margin-bottom: 10px; }
-  .lb-description { font-size: 13px; margin-bottom: 18px; line-height: 1.55; }
-  .lb-meta { gap: 8px; }
-  .lb-divider { margin-bottom: 14px; }
-
-  /* Lightbox nav buttons: keep next/prev but smaller and lower */
-  .lb-nav { width: 40px; height: 40px; }
-  #lb-prev { left: 12px; }
-  #lb-next { right: 12px; }
-  #lb-close { top: 14px; right: 14px; width: 36px; height: 36px; }
-  .lb-download-btn { top: 8px; right: 8px; width: 36px; height: 36px; opacity: 1; }
-  .lb-download-btn svg { width: 16px; height: 16px; }
-
-  /* Footer compresses to a single readable row */
-  .footer {
-    grid-template-columns: 1fr;
-    row-gap: 6px;
-    padding: 10px 14px;
-    text-align: center;
-  }
-  .coordinates-section,
-  .info-section { grid-column: auto; text-align: center; }
-  .info-section { display: none; }
-  #active-filters { grid-column: auto; justify-content: center; }
-  .footer p { font-size: 9px; letter-spacing: 0.12em; }
-  .active-tag { font-size: 8px; padding: 4px 9px; }
-
-  /* Zoom controls hidden on touch — pinch zoom works */
-  .zoom-controls { display: none !important; }
-  #zoom-toast { bottom: 80px; right: 12px; }
-
-  /* Hide cursor dot on touch */
-  .cursor-dot { display: none !important; }
-
-  /* Preloader scales */
-  .pl-title { font-size: 56px; }
-
-  /* No results headline scales */
-  #no-results h2 { font-size: 44px; }
-
-  /* Slightly softer vignette on small screens */
-  .page-vignette-extreme { opacity: 0.4; }
-}
-
-/* Phones */
-@media (max-width: 560px) {
-  #grid-container { padding: 64px 14px 24px; }
-  .grid-item { width: 200px; height: 200px; border-radius: 5px; }
-  .media-badge,
-  .item-number-badge { font-size: 8px; padding: 2px 7px; }
-
-  .header-top-bar { padding: 12px 12px; }
-  .menu-toggle { padding: 6px 10px; }
-  .menu-toggle span:first-child { display: none; }
-  .menu-toggle-icon { font-size: 18px; }
-
-  .theme-dot { width: 14px; height: 14px; border-width: 2px; }
-  .theme-switcher { padding: 3px; gap: 2px; }
-
-  .menu-grid { grid-template-columns: 1fr 1fr; padding: 16px 14px 20px; row-gap: 14px; column-gap: 12px; }
-  h3 { font-size: 8px; margin-bottom: 10px; }
-
-  .lb-title { font-size: 30px; }
-  .lb-tag { font-size: 8px; margin-bottom: 8px; }
-  .lb-meta-item { font-size: 9px; }
-  .lb-meta-value { font-size: 10px; }
-
-  .lb-nav { width: 36px; height: 36px; }
-  #lb-prev { left: 8px; }
-  #lb-next { right: 8px; }
-  #lb-close { top: 10px; right: 10px; width: 32px; height: 32px; }
-
-  .pl-title { font-size: 44px; }
-  .pl-sub { font-size: 10px; }
-
-  #no-results h2 { font-size: 36px; }
-}
-
-/* Short / landscape phones */
-@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
-  .lb-content { flex-direction: row; gap: 16px; }
-  #lightbox-media,
-  #lightbox-media img,
-  #lightbox-media video { max-width: 55vw; max-height: 75vh; }
-  .lb-info-panel { width: 36vw; padding: 8px 0; }
-  .lb-title { font-size: 28px; }
-  .menu-panel.open { max-height: 70vh; }
-}
-
-/* Touch devices: improve tappability + suppress hover quirks */
-@media (hover: none) and (pointer: coarse) {
-  body { cursor: default; }
-  body.dragging { cursor: default; }
-  .cursor-dot { display: none !important; }
-
-  /* Show download button by default on touch (no hover state) */
-  .lb-download-btn { opacity: 1; }
-
-  /* Disable hover-only scale animations that get sticky on touch */
-  .grid-item:hover {
-    transform: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-    border-color: var(--color-border);
-  }
-  .grid-item:hover img,
-  .grid-item:hover video {
-    transform: none;
-    filter: saturate(0.9);
-  }
-  .grid-item:hover::after { opacity: 0; }
-  .grid-item:hover .play-overlay { opacity: 1; transform: translate(-50%, -50%); }
-
-  /* Prevent iOS tap highlight */
-  * { -webkit-tap-highlight-color: transparent; }
-}
 </style>
 </head>
 <body data-theme="void">
@@ -1153,6 +1057,26 @@ body.dragging #canvas-wrapper { cursor: grabbing; }
       <div class="location-section"><h3>Media</h3><ul id="media-type-list"></ul></div>
       <div class="contact-section"><h3>Instagram</h3><ul id="insta-list"></ul></div>
       <div class="social-section"></div>
+
+      <div class="advanced-search">
+        <h3>Advanced Search · Strict Match</h3>
+        <div class="as-field title-f">
+          <label class="as-label" for="as-title">Title</label>
+          <input id="as-title" class="as-input" type="text" placeholder="Search by title…" autocomplete="off" />
+        </div>
+        <div class="as-field desc-f">
+          <label class="as-label" for="as-desc">Description</label>
+          <input id="as-desc" class="as-input" type="text" placeholder="Search by description…" autocomplete="off" />
+        </div>
+        <div class="as-field cousins-f">
+          <label class="as-label" for="as-cousins">Cousins (exact set)</label>
+          <input id="as-cousins" class="as-input" type="text" placeholder="Enter In Age Order" autocomplete="off" />
+        </div>
+        <div class="as-actions">
+          <button class="as-btn" id="as-clear">Clear</button>
+          <button class="as-btn primary" id="as-apply">Apply</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -4360,6 +4284,17 @@ const MEDIA = [
     "src": "n25h-pondering.png",
     "title": "Pondering",
     "desc": "Bro is thinking heavy rn."
+  },
+  {
+    "eventId": "nashville2025",
+    "cousins": [
+      "farooq",
+      "maryam",
+    ],
+    "type": "photo",
+    "src": "n25fm-tiktokGif.gif",
+    "title": "Mirror Pic",
+    "desc": "Beta 😭😭"
   },
   {
     "eventId": "nashville2025",
@@ -9106,6 +9041,7 @@ class CousinAlbum {
     this.lbIndex = 0;
     this.filteredMedia = [];
     this.lbDir = 'right';
+    this.advSearch = { title: '', desc: '', cousins: [] };
     this.vp = document.getElementById('viewport');
     this.cw = document.getElementById('canvas-wrapper');
     this.gc = document.getElementById('grid-container');
@@ -9114,6 +9050,64 @@ class CousinAlbum {
     this._pinchStartDist = null;
     this._pinchStartZoom = null;
     this.initMenuCollapse();
+    this.initAdvancedSearch();
+  }
+
+  initAdvancedSearch() {
+    const tEl = document.getElementById('as-title');
+    const dEl = document.getElementById('as-desc');
+    const cEl = document.getElementById('as-cousins');
+    const apply = document.getElementById('as-apply');
+    const clear = document.getElementById('as-clear');
+    if (!tEl || !dEl || !cEl) return;
+
+    const stop = e => e.stopPropagation();
+    [tEl, dEl, cEl].forEach(el => {
+      ['mousedown','pointerdown','touchstart','click','wheel'].forEach(ev =>
+        el.addEventListener(ev, stop)
+      );
+    });
+
+    const parseCousins = (raw) => {
+      if (!raw.trim()) return [];
+      return raw.split(',')
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean)
+        .map(token => {
+          const byId = COUSINS.find(c => c.id.toLowerCase() === token);
+          if (byId) return byId.id;
+          const byName = COUSINS.find(c => c.name.toLowerCase() === token);
+          if (byName) return byName.id;
+          const partial = COUSINS.find(c =>
+            c.name.toLowerCase().startsWith(token) || c.id.toLowerCase().startsWith(token)
+          );
+          return partial ? partial.id : token;
+        });
+    };
+
+    const runSearch = () => {
+      this.advSearch = {
+        title: tEl.value.trim().toLowerCase(),
+        desc: dEl.value.trim().toLowerCase(),
+        cousins: parseCousins(cEl.value),
+      };
+      this.applyFilters();
+      this.centerView();
+    };
+
+    apply.addEventListener('click', runSearch);
+    [tEl, dEl, cEl].forEach(el => {
+      el.addEventListener('input', runSearch);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); runSearch(); }
+      });
+    });
+    clear.addEventListener('click', () => {
+      tEl.value = ''; dEl.value = ''; cEl.value = '';
+      this.advSearch = { title: '', desc: '', cousins: [] };
+      this.applyFilters();
+      this.centerView();
+    });
   }
 
   initMenuCollapse() {
@@ -9328,11 +9322,31 @@ class CousinAlbum {
   applyFilters() {
     let visible = 0;
     this.filteredMedia = [];
+    const adv = this.advSearch || { title: '', desc: '', cousins: [] };
+    const advCousinsSorted = [...adv.cousins].sort();
     this.allItems.forEach(item => {
       let show = true;
       if (this.activeEvent && item.media.eventId !== this.activeEvent) show = false;
       if (this.activeCousins.size > 0 && ![...this.activeCousins].every(c => item.media.cousins.includes(c))) show = false;
       if (this.activeMedia !== 'all' && item.media.type !== this.activeMedia) show = false;
+
+      // Advanced search — strict matching
+      if (show && adv.title) {
+        const t = (item.media.title || '').toLowerCase();
+        if (!t.includes(adv.title)) show = false;
+      }
+      if (show && adv.desc) {
+        const d = (item.media.desc || '').toLowerCase();
+        if (!d.includes(adv.desc)) show = false;
+      }
+      if (show && advCousinsSorted.length > 0) {
+        const itemCousinsSorted = [...item.media.cousins].sort();
+        if (itemCousinsSorted.length !== advCousinsSorted.length ||
+            !itemCousinsSorted.every((c, i) => c === advCousinsSorted[i])) {
+          show = false;
+        }
+      }
+
       show ? (item.el.classList.remove('hidden'), this.filteredMedia.push(item), visible++) : item.el.classList.add('hidden');
     });
     document.getElementById('footer-count').textContent = `${visible} / ${this.allItems.length} items`;
@@ -9360,6 +9374,26 @@ class CousinAlbum {
       this.applyFilters();
       this.centerView();
     });
+
+    if (adv.title) addTag('title: "' + adv.title + '"', () => {
+      const el = document.getElementById('as-title'); if (el) el.value = '';
+      this.advSearch.title = ''; this.applyFilters(); this.centerView();
+    });
+    if (adv.desc) addTag('desc: "' + adv.desc + '"', () => {
+      const el = document.getElementById('as-desc'); if (el) el.value = '';
+      this.advSearch.desc = ''; this.applyFilters(); this.centerView();
+    });
+    if (advCousinsSorted.length > 0) {
+      const labelNames = advCousinsSorted.map(id => {
+        const c = COUSINS.find(x => x.id === id);
+        return c ? c.name : id;
+      }).join(' + ');
+      addTag('only: ' + labelNames, () => {
+        const el = document.getElementById('as-cousins'); if (el) el.value = '';
+        this.advSearch.cousins = []; this.applyFilters(); this.centerView();
+      });
+    }
+
     const nr = document.getElementById('no-results');
     visible === 0 ? nr.classList.add('show') : nr.classList.remove('show');
   }
