@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="void">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Cousins | Memories</title>
+<meta name="description" content="A private photo and video gallery of memories shared between cousins."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/thegoodmonolith" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+<link rel="stylesheet" href="style.css"/>
+<script src="photodata.js"></script>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="theme-wipe"></div>
+
+<div id="preloader">
+  <div class="pl-title" id="pl-title"></div>
+  <div class="pl-sub">Loading Memories</div>
+  <div class="pl-bar-wrap"><div class="pl-bar"></div></div>
+  <div class="pl-count" id="pl-count">0%</div>
+</div>
+
+<div id="header">
+  <div class="hbar">
+    <div class="logo" id="logo-btn">
+      <div class="logo-mark"><div class="logo-circle"></div><div class="logo-circle"></div></div>
+      <span class="logo-text">The Cousins</span>
+    </div>
+    <div class="hright">
+      <div class="theme-sw">
+        <span class="theme-lbl" id="theme-lbl">VOID</span>
+        <div class="tdot td-void active" data-t="void" title="Void"></div>
+        <div class="tdot td-cream" data-t="cream" title="Cream"></div>
+        <div class="tdot td-aurora" data-t="aurora" title="Aurora"></div>
+        <div class="tdot td-ember" data-t="ember" title="Ember"></div>
+        <div class="tdot td-arctic" data-t="arctic" title="Arctic"></div>
+        <div class="tdot td-neon" data-t="neon" title="Neon"></div>
+        <div class="tdot td-forest" data-t="forest" title="Forest"></div>
+        <div class="tdot td-midnight" data-t="midnight" title="Midnight"></div>
+        <div class="tdot td-rose" data-t="rose" title="Rose"></div>
+        <div class="tdot td-cobalt" data-t="cobalt" title="Cobalt"></div>
+      </div>
+      <button class="map-btn" id="map-btn">MAP</button>
+      <button class="map-btn" id="otd-btn">THIS MONTH</button>
+      <button class="map-btn" id="surprise-btn">🎲</button>
+      <button class="map-btn" id="stats-btn">STATS</button>
+      <button class="map-btn" id="compare-btn">COMPARE</button>
+      <button class="map-btn" id="speedtag-btn">⚡ TAG</button>
+      <button class="map-btn" id="sups-btn">🏆 SUPS</button>
+      <button class="map-btn" id="slide-btn">▶ PLAY</button>
+      <button class="map-btn" id="shuffle-btn">🔀 SHUFFLE</button>
+      <button class="map-btn" id="theme-click-btn" title="Random theme on photo click">🎨</button>
+      <button class="map-btn" id="search-quick-btn" title="Search (opens menu)">🔍</button>
+      <a class="map-btn" id="add-memory-btn" href="upload.html" style="text-decoration:none">＋ ADD MEMORY</a>
+      <button class="map-btn" id="logout-btn" title="Log out" onclick="logout()">LOG OUT</button>
+      <button class="menu-btn" id="menu-btn"><span>Menu</span><span class="menu-icon">+</span></button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menu-panel">
+    <div class="search-wrap" id="search-wrap">
+      <span class="search-wrap-label">Quick Search</span>
+      <div class="search-field-row">
+        <span class="search-icon-pre">🔍</span>
+        <input class="search-input" id="search-input" type="text" placeholder="Search cousins, events, memories…" autocomplete="off">
+        <button class="search-clear" id="search-clear" title="Clear">×</button>
+      </div>
+      <div class="search-results" id="search-results" style="display:none"></div>
+    </div>
+    <div class="mixtape-menu-wrap" id="spotify-widget">
+      <span class="search-wrap-label">Now Playing</span>
+      <div class="sp-event">The Cousins Mixtape <span class="sp-mini-dot" id="sp-dot"></span></div>
+      <div class="sp-player-wrap" id="sp-player-wrap"></div>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+</div>
+
+<div id="viewport">
+  <div id="canvas-wrap">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<div id="lightbox">
+  <div class="lb-back" id="lb-back"></div>
+  <div class="lb-content">
+    <button class="lb-close" id="lb-close" type="button" aria-label="Close photo viewer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden">
+      <div class="lb-toolbar" id="lb-toolbar">
+        <button class="lb-tbtn" id="lb-rot-l" title="Rotate Left">↺</button>
+        <button class="lb-tbtn" id="lb-rot-r" title="Rotate Right">↻</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
+        <button class="lb-tbtn" id="lb-zi" title="Zoom In">+</button>
+        <span class="lb-zoom-val" id="lb-zoom-val">100%</span>
+        <button class="lb-tbtn" id="lb-zo" title="Zoom Out">−</button>
+        <button class="lb-tbtn" id="lb-zr" title="Reset" style="font-size:10px;letter-spacing:.05em;font-family:monospace">RST</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 2px"></div>
+        <span id="lb-media-type" style="font-family:monospace;font-size:9px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase"></span>
+      </div>
+      <div class="lb-media-wrap" id="lb-media-wrap">
+        <div class="lb-media" id="lb-media">
+          <button class="lb-nav lb-prev" id="lb-prev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="lb-nav lb-next" id="lb-next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="lb-swipe-hint" id="lb-swipe-hint">← swipe to navigate →</div>
+        </div>
+        <!-- Slideshow overlay — OUTSIDE lb-media so it survives innerHTML clears -->
+        <div id="ss-overlay">
+          <div class="ss-timer-bar"><div class="ss-timer-fill" id="ss-fill"></div></div>
+          <button class="ss-pause-btn" id="ss-pause">⏸</button>
+          <div class="ss-clock" id="ss-clock">5s</div>
+        </div>
+      </div>
+    </div>
+    <div class="lb-info">
+      <span class="lb-tag" id="lb-tag">Memory</span>
+      <div class="lb-title" id="lb-title"></div>
+      <div class="lb-desc" id="lb-desc"></div>
+      <div class="lb-div"></div>
+      <div class="lb-meta">
+        <div class="lb-row"><span class="lb-mlbl">Event</span><span class="lb-mval" id="lb-event"></span></div>
+        <div class="lb-row"><span class="lb-mlbl">Date</span><span class="lb-mval" id="lb-date"></span></div>
+        <div class="lb-row"><span class="lb-mlbl">With</span><span class="lb-mval" id="lb-cousins"></span></div>
+        <div class="lb-row"><span class="lb-mlbl">No.</span><span class="lb-num" id="lb-num"></span></div>
+      </div>
+      <div class="lb-actions-row">
+        <a class="lb-dl" id="lb-dl" title="Download" download>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>
+        </a>
+        <button class="lb-fav-btn" id="lb-fav-btn" title="Add to favorites" aria-label="Toggle favorite">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.6-4.6-10-9.3C.4 8 2 4 6 4c2 0 3.6 1.2 4 2.8C10.4 5.2 12 4 14 4c4 0 5.6 4 4 7.7C19.6 16.4 12 21 12 21z"/></svg>
+        </button>
+      </div>
+      <button class="lb-share-btn" id="lb-share-btn">↗ SHARE CARD</button>
+      <button class="lb-cmp-btn" id="lb-cmp-btn">⊕ ADD TO COMPARE</button>
+      <div class="lb-related" id="lb-related" style="display:none">
+        <span class="lb-related-lbl">MORE LIKE THIS</span>
+        <div class="lb-related-strip" id="lb-related-strip"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP VIEW -->
+<div id="mapview">
+  <div class="map-container">
+    <div class="map-left">
+      <div class="map-header">
+        <div class="map-header-title">
+          <div class="map-htag">Memory Coordinates</div>
+          <div class="map-htitle">MEMORIES MAP</div>
+        </div>
+        <button class="map-close" id="map-close" type="button" aria-label="Close map"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <!-- Southeastern US SVG map — formula: x=(93-lon)/15*810+15, y=(37.5-lat)/13.5*545+18 -->
+      <svg class="map-base-svg" viewBox="0 0 840 580" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="softglow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="bgGrad" cx="50%" cy="45%" r="60%"><stop offset="0%" stop-color="#071812" stop-opacity="1"/><stop offset="100%" stop-color="#030809" stop-opacity="1"/></radialGradient>
+        </defs>
+        <rect width="840" height="580" fill="url(#bgGrad)"/>
+        <line x1="0" y1="119" x2="840" y2="119" stroke="rgba(100,200,150,.04)" stroke-width="1"/>
+        <line x1="0" y1="306" x2="840" y2="306" stroke="rgba(100,200,150,.04)" stroke-width="1"/>
+        <line x1="447" y1="0" x2="447" y2="580" stroke="rgba(100,200,150,.03)" stroke-width="1"/>
+        <path d="M 414.2,49.0 L 424.9,53.7 L 432.5,51.3 L 450.5,53.9 L 455.7,50.5 L 462.5,49.4 L 464.6,55.2 L 470.1,56.2 L 476.6,60.9 L 475.3,71.3 L 481.1,77.9 L 488.7,83.0 L 491.0,87.0 L 500.2,91.0 L 506.4,91.5 L 488.1,100.8 L 470.6,105.9 L 470.6,108.5 L 463.6,110.8 L 463.0,113.8 L 453.9,115.2 L 450.8,118.9 L 424.3,124.4 L 285.8,122.0 L 225.7,122.7 L 215.2,121.2 L 216.0,127.4 L 150.9,127.4 L 153.5,123.1 L 160.6,124.6 L 164.5,110.6 L 162.1,108.7 L 169.4,102.7 L 174.9,102.3 L 192.5,107.6 L 198.5,104.8 L 194.0,100.2 L 195.8,96.6 L 215.5,93.4 L 211.0,87.4 L 221.7,79.2 L 233.8,78.9 L 237.7,76.4 L 241.9,78.9 L 248.1,77.7 L 260.2,82.8 L 264.1,79.2 L 276.1,75.8 L 279.2,79.2 L 290.0,77.9 L 289.2,74.1 L 299.6,69.8 L 301.5,73.8 L 312.2,77.0 L 317.7,74.7 L 322.1,66.0 L 330.5,64.3 L 333.6,60.0 L 341.7,57.1 L 341.2,50.3 L 353.5,51.8 L 362.4,48.6 L 370.8,48.4 L 366.8,39.0 L 370.5,37.5 L 388.8,37.5 L 398.5,44.7 L 399.2,47.7 L 414.2,49.0 Z"
+              fill="rgba(100,200,150,.04)" stroke="rgba(100,200,150,.16)" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M 679.2,25.0 L 704.1,36.5 L 709.3,29.9 L 716.6,30.5 L 721.9,33.3 L 721.9,38.4 L 731.8,40.1 L 738.1,43.3 L 741.7,48.2 L 737.5,53.7 L 731.8,55.2 L 728.1,60.2 L 730.2,63.7 L 743.0,62.6 L 745.4,68.1 L 762.1,70.4 L 766.8,74.7 L 780.2,79.4 L 774.2,89.1 L 779.6,96.6 L 773.1,100.2 L 772.3,104.6 L 778.3,107.2 L 771.8,111.4 L 761.9,105.9 L 759.5,107.8 L 768.1,111.8 L 791.7,112.7 L 797.7,125.5 L 623.8,125.9 L 425.1,123.8 L 450.8,118.9 L 453.9,115.2 L 463.0,113.8 L 463.6,110.8 L 470.6,108.5 L 470.6,105.9 L 488.1,100.8 L 506.4,91.5 L 505.7,94.4 L 512.2,100.2 L 520.3,103.1 L 526.3,102.9 L 535.5,98.3 L 542.0,101.9 L 554.3,100.0 L 576.0,93.4 L 577.8,95.5 L 586.2,92.5 L 586.4,86.2 L 591.7,80.8 L 600.6,75.7 L 604.2,69.4 L 613.6,63.0 L 617.3,55.1 L 625.4,59.8 L 633.2,61.3 L 638.2,58.5 L 648.4,46.2 L 654.4,49.2 L 676.6,35.2 L 679.2,25.0 Z"
+              fill="rgba(100,200,150,.04)" stroke="rgba(100,200,150,.16)" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M 216.0,127.4 L 215.2,121.2 L 225.7,122.7 L 285.8,122.0 L 383.6,124.0 L 520.3,124.2 L 518.2,132.4 L 509.3,134.1 L 503.3,140.5 L 494.7,139.2 L 475.8,145.8 L 474.5,142.4 L 468.0,144.6 L 457.5,152.4 L 445.3,154.3 L 433.5,159.6 L 420.4,159.8 L 408.7,164.9 L 405.0,170.5 L 395.6,171.3 L 394.3,179.4 L 108.3,179.2 L 113.0,178.3 L 117.7,172.2 L 116.9,163.9 L 125.8,158.2 L 127.4,153.0 L 134.4,151.1 L 136.0,144.6 L 145.4,135.9 L 145.1,127.4 L 216.0,127.4 Z"
+              fill="rgba(100,200,150,.11)" stroke="rgba(100,200,150,.44)" stroke-width="1.8" stroke-linejoin="round" id="st-tn"/>
+        <path d="M 520.3,124.2 L 623.8,125.9 L 797.7,125.5 L 803.2,139.3 L 789.8,138.0 L 788.0,139.7 L 771.8,141.8 L 769.4,143.7 L 758.7,144.3 L 759.2,146.7 L 772.3,145.0 L 774.2,146.5 L 788.5,144.8 L 793.2,148.0 L 801.9,146.7 L 805.0,155.0 L 802.1,159.0 L 796.4,159.4 L 784.3,167.9 L 768.4,168.3 L 765.8,174.1 L 772.6,180.0 L 778.1,181.1 L 767.9,190.8 L 759.2,189.6 L 744.1,190.6 L 733.6,192.6 L 717.2,199.3 L 704.1,208.0 L 697.3,218.9 L 687.4,216.5 L 670.1,218.7 L 616.0,185.8 L 562.4,185.3 L 563.2,181.3 L 555.8,175.4 L 550.9,177.5 L 550.6,173.9 L 491.8,172.2 L 478.7,173.6 L 468.5,176.8 L 452.1,179.0 L 394.3,179.4 L 395.6,171.3 L 405.0,170.5 L 408.7,164.9 L 420.4,159.8 L 433.5,159.6 L 445.3,154.3 L 457.5,152.4 L 468.0,144.6 L 474.5,142.4 L 475.8,145.8 L 494.7,139.2 L 503.3,140.5 L 509.3,134.1 L 518.2,132.4 L 520.3,124.2 Z"
+              fill="rgba(100,200,150,.06)" stroke="rgba(100,200,150,.24)" stroke-width="1.3" stroke-linejoin="round" id="st-nc"/>
+        <path d="M 468.5,176.8 L 478.7,173.6 L 491.8,172.2 L 550.6,173.9 L 550.9,177.5 L 555.8,175.4 L 563.2,181.3 L 562.4,185.3 L 616.0,185.8 L 670.1,218.7 L 661.7,220.4 L 651.3,226.1 L 641.1,235.0 L 639.2,242.2 L 631.1,247.8 L 620.4,247.8 L 618.1,252.0 L 606.8,256.5 L 600.6,261.4 L 590.6,263.5 L 579.9,268.8 L 578.9,271.3 L 568.9,274.1 L 558.2,281.5 L 547.2,278.5 L 547.0,272.6 L 539.4,263.3 L 532.8,260.9 L 532.3,253.5 L 529.2,247.8 L 516.4,242.5 L 508.0,236.1 L 508.5,232.1 L 495.7,226.3 L 489.4,219.9 L 478.5,215.5 L 470.9,208.3 L 469.3,204.4 L 462.0,196.8 L 457.0,197.4 L 441.1,190.0 L 441.9,186.4 L 452.1,179.0 L 468.5,176.8 Z"
+              fill="rgba(100,200,150,.06)" stroke="rgba(100,200,150,.24)" stroke-width="1.3" stroke-linejoin="round" id="st-sc"/>
+        <path d="M 452.1,179.0 L 441.9,186.4 L 441.1,190.0 L 457.0,197.4 L 462.0,196.8 L 469.3,204.4 L 470.9,208.3 L 478.5,215.5 L 489.4,219.9 L 495.7,226.3 L 508.5,232.1 L 508.0,236.1 L 516.4,242.5 L 529.2,247.8 L 532.3,253.5 L 532.8,260.9 L 539.4,263.3 L 547.0,272.6 L 547.2,278.5 L 558.2,281.5 L 546.4,293.2 L 544.3,299.2 L 539.4,304.5 L 538.9,310.0 L 533.6,312.5 L 531.5,327.2 L 518.5,325.9 L 507.5,323.1 L 503.0,325.7 L 504.9,332.1 L 502.8,339.1 L 497.0,339.3 L 494.7,331.9 L 368.1,327.0 L 356.4,307.6 L 359.8,298.5 L 355.1,288.1 L 359.2,282.2 L 359.0,277.9 L 367.1,273.5 L 361.6,271.5 L 363.7,268.1 L 358.5,262.6 L 353.0,252.9 L 332.8,179.6 L 452.1,179.0 Z"
+              fill="rgba(100,200,150,.12)" stroke="rgba(100,200,150,.48)" stroke-width="2" stroke-linejoin="round" id="st-ga"/>
+        <path d="M 208.9,179.2 L 332.8,179.6 L 353.0,252.9 L 358.5,262.6 L 363.7,268.1 L 361.6,271.5 L 367.1,273.5 L 359.0,277.9 L 359.2,282.2 L 355.1,288.1 L 359.8,298.5 L 356.4,307.6 L 361.6,317.0 L 237.7,317.2 L 236.1,321.7 L 246.8,328.4 L 245.0,334.0 L 248.7,336.9 L 241.6,342.0 L 235.1,343.1 L 223.0,337.4 L 221.7,328.9 L 218.1,328.0 L 213.6,334.4 L 212.1,340.6 L 199.8,338.9 L 196.1,286.2 L 213.9,182.8 L 208.9,179.2 Z"
+              fill="rgba(100,200,150,.08)" stroke="rgba(100,200,150,.30)" stroke-width="1.5" stroke-linejoin="round" id="st-al"/>
+        <path d="M 108.3,179.2 L 208.9,179.2 L 213.9,182.8 L 196.1,286.2 L 199.8,338.9 L 194.5,340.4 L 183.0,339.7 L 178.3,337.4 L 166.8,338.9 L 150.9,342.9 L 145.9,345.4 L 140.2,341.8 L 138.3,336.1 L 130.5,328.5 L 135.2,317.2 L 45.0,317.2 L 48.4,314.7 L 45.0,307.9 L 50.8,307.6 L 51.5,294.9 L 56.2,295.7 L 59.1,287.9 L 70.4,283.0 L 76.1,275.1 L 75.1,264.8 L 68.0,260.5 L 68.5,253.5 L 71.9,252.0 L 67.5,248.0 L 71.1,243.3 L 68.5,236.1 L 72.7,233.3 L 64.3,228.7 L 71.9,218.2 L 80.6,212.7 L 77.7,208.9 L 87.6,203.2 L 87.4,201.0 L 96.0,199.1 L 95.2,192.3 L 100.2,190.8 L 103.6,184.9 L 111.1,182.3 L 108.3,179.2 Z"
+              fill="rgba(100,200,150,.07)" stroke="rgba(100,200,150,.26)" stroke-width="1.3" stroke-linejoin="round" id="st-ms"/>
+        <path d="M 237.7,317.2 L 361.6,317.0 L 368.1,327.0 L 494.7,331.9 L 497.0,339.3 L 502.8,339.1 L 504.9,332.1 L 503.0,325.7 L 507.5,323.1 L 518.5,325.9 L 531.5,327.2 L 534.4,342.1 L 540.4,359.0 L 554.3,381.1 L 575.5,404.7 L 572.3,406.4 L 573.4,417.4 L 582.3,429.7 L 596.1,454.4 L 599.0,462.2 L 593.5,498.6 L 589.1,499.2 L 584.3,508.1 L 585.9,510.9 L 576.8,517.4 L 573.1,515.8 L 564.2,518.5 L 549.1,520.0 L 544.6,516.4 L 546.7,511.1 L 536.0,495.8 L 527.6,493.0 L 520.3,495.1 L 514.5,486.5 L 513.0,479.6 L 503.0,471.8 L 500.7,466.7 L 502.3,459.3 L 496.8,458.0 L 498.1,462.4 L 493.1,463.5 L 477.9,444.8 L 471.9,440.1 L 486.3,426.3 L 476.9,427.0 L 470.6,431.4 L 464.3,424.6 L 472.7,405.7 L 474.3,390.0 L 468.5,386.2 L 466.7,381.1 L 457.5,379.9 L 446.8,371.6 L 438.2,368.2 L 437.7,363.1 L 431.7,361.2 L 426.7,355.6 L 408.4,348.0 L 392.5,349.7 L 393.2,355.0 L 388.0,354.1 L 368.1,360.5 L 347.0,362.0 L 347.5,358.2 L 342.5,353.7 L 317.7,343.5 L 299.9,339.1 L 284.0,338.0 L 241.6,342.0 L 248.7,336.9 L 245.0,334.0 L 246.8,328.4 L 236.1,321.7 L 237.7,317.2 Z"
+              fill="rgba(100,200,150,.10)" stroke="rgba(100,200,150,.38)" stroke-width="1.6" stroke-linejoin="round" id="st-fl"/>
+        <text x="299" y="152" font-family="monospace" font-size="12" fill="rgba(100,200,150,.52)" text-anchor="middle" letter-spacing="4">TN</text>
+        <text x="444" y="261" font-family="monospace" font-size="12" fill="rgba(100,200,150,.52)" text-anchor="middle" letter-spacing="4">GA</text>
+        <text x="521" y="425" font-family="monospace" font-size="11" fill="rgba(100,200,150,.48)" text-anchor="middle" letter-spacing="3">FL</text>
+        <text x="278" y="262" font-family="monospace" font-size="11" fill="rgba(100,200,150,.38)" text-anchor="middle" letter-spacing="3">AL</text>
+        <text x="136" y="267" font-family="monospace" font-size="11" fill="rgba(100,200,150,.35)" text-anchor="middle" letter-spacing="3">MS</text>
+        <text x="575" y="233" font-family="monospace" font-size="10" fill="rgba(100,200,150,.36)" text-anchor="middle" letter-spacing="2">SC</text>
+        <text x="581" y="176" font-family="monospace" font-size="10" fill="rgba(100,200,150,.36)" text-anchor="middle" letter-spacing="2">NC</text>
+        <text x="374" y="66" font-family="monospace" font-size="10" fill="rgba(100,200,150,.28)" text-anchor="middle" letter-spacing="2">KY</text>
+        <text x="684" y="60" font-family="monospace" font-size="10" fill="rgba(100,200,150,.28)" text-anchor="middle" letter-spacing="2">VA</text>
+        <line x1="277" y1="139" x2="391" y2="222" stroke="rgba(100,200,150,.32)" stroke-width="1.3" stroke-dasharray="6,8" id="line-nash-atl"/>
+        <line x1="391" y1="222" x2="535" y2="402" stroke="rgba(100,200,150,.32)" stroke-width="1.3" stroke-dasharray="6,8" id="line-atl-fl"/>
+        <g transform="translate(55,524)">
+          <circle cx="0" cy="0" r="22" fill="none" stroke="rgba(100,200,150,.20)" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="3" fill="rgba(100,200,150,.35)"/>
+          <line x1="0" y1="-16" x2="0" y2="16" stroke="rgba(100,200,150,.38)" stroke-width="1.2"/>
+          <line x1="-16" y1="0" x2="16" y2="0" stroke="rgba(100,200,150,.38)" stroke-width="1.2"/>
+          <polygon points="0,-22 -4,-10 0,-14 4,-10" fill="rgba(100,200,150,.65)"/>
+          <text x="0" y="-28" font-family="monospace" font-size="10" fill="rgba(100,200,150,.75)" text-anchor="middle">N</text>
+        </g>
+        <g transform="translate(672,548)">
+          <line x1="0" y1="0" x2="90" y2="0" stroke="rgba(100,200,150,.38)" stroke-width="1.5"/>
+          <line x1="0" y1="-5" x2="0" y2="5" stroke="rgba(100,200,150,.38)" stroke-width="1.5"/>
+          <line x1="90" y1="-5" x2="90" y2="5" stroke="rgba(100,200,150,.38)" stroke-width="1.5"/>
+          <text x="45" y="-9" font-family="monospace" font-size="8" fill="rgba(100,200,150,.52)" text-anchor="middle">~200 mi</text>
+        </g>
+      </svg>
+    </div>
+    <div class="map-right" id="map-right">
+    </div>
+  </div>
+</div>
+
+
+<footer id="footer">
+  <div class="ftxt" id="fcount">0 / 0 MEMORIES</div>
+  <div class="fchips" id="fchips"></div>
+  <div class="ftxt" id="fdate"></div>
+</footer>
+
+<div id="zoom">
+  <div class="zlbl" id="zlbl">100%</div>
+  <button class="zbtn" id="zin">+</button>
+  <div class="ztrack"><div class="zthumb" id="zthumb"></div></div>
+  <button class="zbtn" id="zout">−</button>
+  <button class="zbtn zrst" id="zrst">RST</button>
+</div>
+
+<div id="nores"><h2>Nothing Here</h2><p>Try different filters</p></div>
+<div id="vig"></div>
+<div id="toast"></div>
+<div id="draghint">DRAG TO EXPLORE</div>
+
+<div class="c-dot" id="cdot"></div>
+<div class="c-ring" id="cring"></div>
+<div class="c-ring2" id="cring2"></div>
+<div class="c-label" id="clabel"></div>
+
+<!-- ON THIS DAY MODAL -->
+<div id="otd-view">
+  <div class="otd-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Memory Archive</div>
+        <div class="modal-title">ON THIS MONTH</div>
+      </div>
+      <button class="modal-close" id="otd-close" type="button" aria-label="Close this month view">✕</button>
+    </div>
+    <div class="otd-body" id="otd-body"></div>
+  </div>
+</div>
+
+<!-- STATS DASHBOARD MODAL -->
+<div id="stats-view">
+  <div class="stats-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Memory Analytics</div>
+        <div class="modal-title">THE STATS</div>
+      </div>
+      <button class="modal-close" id="stats-close" type="button" aria-label="Close stats dashboard">✕</button>
+    </div>
+    <div class="stats-body" id="stats-body"></div>
+  </div>
+</div>
+
+<!-- COMPARE / DUETS MODAL -->
+<div id="cmp-view">
+  <div class="cmp-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Side By Side</div>
+        <div class="modal-title">DUETS</div>
+      </div>
+      <button class="modal-close" id="cmp-close" type="button" aria-label="Close compare view">✕</button>
+    </div>
+    <div class="cmp-body">
+      <div class="cmp-side">
+        <img id="cmp-left-img" src="" alt="">
+        <div class="cmp-info">
+          <div class="cmp-side-num" id="cmp-left-num"></div>
+          <div class="cmp-side-title" id="cmp-left-title"></div>
+          <div class="cmp-side-meta" id="cmp-left-meta"></div>
+          <div class="cmp-side-cousins" id="cmp-left-cousins"></div>
+        </div>
+      </div>
+      <div class="cmp-divider"></div>
+      <div class="cmp-side">
+        <img id="cmp-right-img" src="" alt="">
+        <div class="cmp-info">
+          <div class="cmp-side-num" id="cmp-right-num"></div>
+          <div class="cmp-side-title" id="cmp-right-title"></div>
+          <div class="cmp-side-meta" id="cmp-right-meta"></div>
+          <div class="cmp-side-cousins" id="cmp-right-cousins"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT'S NEW POPUP -->
+<div id="whatsnew-view">
+  <div class="wn-box">
+    <button class="wn-close" id="wn-close" type="button" aria-label="Close what's new popup">✕</button>
+    <div class="wn-tag">Latest Update</div>
+    <div class="wn-title">WHAT'S NEW</div>
+    <div class="wn-date" id="wn-date"></div>
+    <ul class="wn-list">
+      <li><span class="wn-icon">🎵</span><span><strong>The Cousins Mixtape</strong> — a shared playlist now plays right in the menu</span></li>
+      <li><span class="wn-icon">📸</span><span><strong>New ATL 26 Media</strong> — fresh photos & videos from Atlanta, July 2026</span></li>
+      <li><span class="wn-icon">❤</span><span><strong>Favorites</strong> — heart any photo or video in the lightbox and filter down to just your favorites</span></li>
+      <li><span class="wn-icon">📖</span><span><strong>Yearbook Maker</strong> — build a printable poster collage from your favorites or current filter</span></li>
+      <li><span class="wn-icon">👤</span><span><strong>Cousin Profiles</strong> — tap the profile icon next to any name in the People menu for their stats</span></li>
+      <li><span class="wn-icon">🎁</span><span><strong>Wrapped</strong> — open a cousin's profile for a Spotify-Wrapped-style recap of their memories</span></li>
+    </ul>
+    <button class="wn-btn" id="wn-got-it">Got it — Let's Go! →</button>
+  </div>
+</div>
+
+
+<!-- LONG-PRESS PREVIEW -->
+<div id="lp-preview">
+  <div>
+    <div class="lp-img-wrap">
+      <img id="lp-img" src="" alt="">
+      <div class="lp-title" id="lp-title"></div>
+    </div>
+    <div class="lp-hint">TAP / CLICK TO OPEN · RELEASE TO DISMISS</div>
+  </div>
+</div>
+
+<!-- COUNTDOWN WIDGET -->
+<div id="countdown-widget">
+  <button class="cd-close" id="cd-close" type="button" title="Minimize" aria-label="Minimize countdown widget">−</button>
+  <div class="cd-mini-pill">NEXT EVENT</div>
+  <div class="cd-lbl">Event</div>
+  <div class="cd-event" id="cd-event-name"></div>
+  <div class="cd-nums" id="cd-nums"></div>
+</div>
+
+<!-- SPEED-TAG GAME -->
+<div id="speedtag-view">
+  <div class="st-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Quick Reflexes</div>
+        <div class="modal-title">SPEED-TAG</div>
+      </div>
+      <button class="modal-close" id="st-close" type="button" aria-label="Close speed-tag game">✕</button>
+    </div>
+    <div class="st-photo-wrap" id="st-photo-wrap">
+      <img id="st-img" src="" alt="">
+      <div class="st-timer-ring" id="st-timer-ring">
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="20"/>
+          <circle class="st-prog" id="st-prog" cx="24" cy="24" r="20"/>
+        </svg>
+        <div class="st-timer-num" id="st-timer-num">10</div>
+      </div>
+      <div class="st-clue" id="st-clue"></div>
+    </div>
+    <div class="st-choices" id="st-choices"></div>
+    <div class="st-footer">
+      <div>
+        <div class="st-score" id="st-score">0</div>
+        <div class="st-score-lbl">SCORE</div>
+      </div>
+      <div class="st-result-msg" id="st-result-msg"></div>
+      <button class="st-next-btn" id="st-next-btn" disabled>NEXT →</button>
+    </div>
+  </div>
+</div>
+
+<!-- COUSIN SUPERLATIVES -->
+<div id="sups-view">
+  <div class="sups-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Yearbook Edition</div>
+        <div class="modal-title">COUSIN SUPERLATIVES</div>
+      </div>
+      <button class="modal-close" id="sups-close" type="button" aria-label="Close cousin superlatives">✕</button>
+    </div>
+    <div class="sups-body">
+      <div class="sups-grid" id="sups-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- YEARBOOK / POSTER MAKER -->
+<div id="yearbook-view">
+  <div class="yb-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Print & Export</div>
+        <div class="modal-title">YEARBOOK MAKER</div>
+      </div>
+      <button class="modal-close" id="yb-close" type="button" aria-label="Close yearbook maker">✕</button>
+    </div>
+    <div class="yb-body">
+      <div class="yb-controls">
+        <div class="yb-control-group">
+          <div class="yb-control-lbl">SOURCE</div>
+          <div class="yb-btn-row">
+            <button class="yb-src-btn" data-src="favorites">❤ Favorites</button>
+            <button class="yb-src-btn" data-src="filtered">🔎 Current Filter</button>
+            <button class="yb-src-btn" data-src="all">🗂 Everything</button>
+          </div>
+        </div>
+        <div class="yb-control-group">
+          <div class="yb-control-lbl">LAYOUT</div>
+          <div class="yb-btn-row">
+            <button class="yb-layout-btn" data-n="9">3×3</button>
+            <button class="yb-layout-btn" data-n="16">4×4</button>
+            <button class="yb-layout-btn" data-n="25">5×5</button>
+            <button class="yb-layout-btn" data-n="36">6×6</button>
+          </div>
+        </div>
+        <div class="yb-control-group yb-control-group-text">
+          <div class="yb-control-lbl">TITLE</div>
+          <input class="yb-text-input" id="yb-title-input" type="text" placeholder="The Cousins" maxlength="40">
+          <div class="yb-control-lbl" style="margin-top:8px">SUBTITLE</div>
+          <input class="yb-text-input" id="yb-subtitle-input" type="text" placeholder="July 2026" maxlength="40">
+        </div>
+      </div>
+      <div class="yb-preview-wrap">
+        <div class="yb-preview-head">
+          <span id="yb-count">0 photos available</span>
+          <button class="yb-reroll-btn" id="yb-reroll-btn">🔀 Shuffle Picks</button>
+        </div>
+        <div class="yb-preview-grid" id="yb-preview-grid"></div>
+        <div class="yb-hint">Tap a photo to swap it for another · videos aren't included in prints</div>
+      </div>
+    </div>
+    <div class="yb-footer">
+      <button class="yb-generate-btn" id="yb-generate-btn">⬇ Generate & Download Poster</button>
+    </div>
+  </div>
+</div>
+
+<!-- COUSIN PROFILE -->
+<div id="profile-view">
+  <div class="profile-container">
+    <div class="modal-head">
+      <div>
+        <div class="modal-tag">Cousin File</div>
+        <div class="modal-title" id="profile-modal-title">PROFILE</div>
+      </div>
+      <button class="modal-close" id="profile-close" type="button" aria-label="Close cousin profile">✕</button>
+    </div>
+    <div class="profile-body" id="profile-body"></div>
+  </div>
+</div>
+
+<!-- WRAPPED -->
+<div id="wrapped-view">
+  <div class="wr-container">
+    <div class="wr-progress" id="wrapped-progress"></div>
+    <button class="wr-close" id="wrapped-close" type="button" aria-label="Close wrapped">✕</button>
+    <div class="wr-stage" id="wrapped-stage"></div>
+    <div class="wr-tap-zone wr-tap-left" id="wr-tap-left" title="Previous"></div>
+    <div class="wr-tap-zone wr-tap-right" id="wr-tap-right" title="Next"></div>
+  </div>
+</div>
+
+<!-- COMPARE HINT BAR -->
+<div id="compare-hint" style="display:none">
+  <span>Pick 2 photos</span>
+  <span id="compare-badge" style="display:none">0/2</span>
+  <button onclick="toggleCompareMode()">Cancel</button>
+</div>
+
+<script src="app.js"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('serviceWorker.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
